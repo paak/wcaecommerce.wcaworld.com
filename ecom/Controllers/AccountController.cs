@@ -41,7 +41,8 @@ namespace ecom.Controllers
 
             IQueryable<ViewMember> query = _db.Members.AsNoTracking()
                 .Where(x => x.Username == model.Username)
-                .Where(x => x.Password == model.Password);
+                .Where(x => x.Password == model.Password)
+                .Where(x => x.Nid == 103);
 
             //bool isValid = query.Count() > 0 ? true : false;
             int Cid = query.Select(x => x.Cid).FirstOrDefault();

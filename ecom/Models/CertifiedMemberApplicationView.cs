@@ -9,6 +9,8 @@ namespace ecom.Models
     {
         public ViewMember Company { get; set; }
 
+        public string Status { get; set; }
+
         public EcomCert EcomCert { get; set; }
 
         /* Company Details */

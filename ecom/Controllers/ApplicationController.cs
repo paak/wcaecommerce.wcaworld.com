@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace ecom.Controllers
@@ -65,8 +64,10 @@ namespace ecom.Controllers
             }
 
             ViewMember member = _db.Members.AsNoTracking()
-                //.Include(x => x.Member)
-                .FirstOrDefault(x => x.Cid == Cid);
+                .Include(x => x.Memberships)
+                .Include(x => x.Memberships.Select(y => y.Network))
+                .FirstOrDefault(x => x.Cid == Cid && x.Nid == 103);
+
             if (member == null)
             {
                 //redirec to logi
@@ -85,6 +86,15 @@ namespace ecom.Controllers
 
             if (cert != null)
             {
+                int StatusId = _db.EcomCert_Status.AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.StatusID)
+                    .FirstOrDefault();
+
+                // Status
+                model.Status = StatusId == 1 ? "draft" : "submitted";
+
+
                 // Company detail
                 EcomCert_CompDetail companyDetail = _db.EcomCert_CompDetail
                     .Find(cert.CertID);
@@ -111,7 +121,7 @@ namespace ecom.Controllers
 
                 model.Company_Service = companyService;
                 model.Services = companyServicesProvide;
-                
+
                 // Company service cross-border service provide
                 model.CrossBorderServices = _db.EcomCert_Service_CrossBorder
                     .AsNoTracking()
@@ -203,6 +213,11 @@ namespace ecom.Controllers
 
                     // EcomCert_IT
                     InsertOrUpdateCompanyIT(cert.CertID, model.Company_IT);
+
+                    if (btn_save == "submit")
+                    {
+                        // Mail to salesrep and Alex
+                    }
                 }
 
                 return RedirectToAction("Certified");
@@ -511,6 +526,12 @@ namespace ecom.Controllers
 
                 db.SaveChanges();
             }
+
+        }
+
+
+        private void SendEmail()
+        {
 
         }
 

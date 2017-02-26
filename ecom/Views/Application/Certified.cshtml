@@ -67,7 +67,16 @@
                             </label>
                             <div class="col-sm-9">
                                 <ul class="list-unstyled">
-                                    <li></li>
+                                    @foreach (var item in Model.Company.Memberships)
+                                    {
+                                        if (item.Network.Network_Type == 1)
+                                        {
+                                    <li class="row">
+                                        <span class="col-sm-2">@item.Network.Network_SName</span>
+                                        <span class="col-sm-10">@string.Format("{0:MM/dd/yyyy}", item.AnnounceDate)</span>
+                                    </li>
+                                        }
+                                    }
                                 </ul>
                             </div>
                         </div>
@@ -198,7 +207,7 @@
                                 {
                                     <div class="radio">
                                         <label>
-                                            <input name="Company_Detail.AvgPackageWeightID" type="radio" value="@item.ID" @if (Model.Company_Detail.AvgPackageWeightID == item.ID) { @("checked")      ; } />
+                                            <input name="Company_Detail.AvgPackageWeightID" type="radio" value="@item.ID" @if (Model.Company_Detail.AvgPackageWeightID == item.ID) { @("checked")        ; } />
                                             @Html.Raw(item.Name)
                                         </label>
                                     </div>
@@ -218,7 +227,7 @@
                                             <input type="checkbox"
                                                    name="Products_Handled"
                                                    value="@item.ID"
-                                                   @if (Model.Products_Handled.Any(x => x == item.ID)) { @("checked")            } /> @item.Name
+                                                   @if (Model.Products_Handled.Any(x => x == item.ID)) { @("checked")              } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -397,6 +406,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
@@ -420,7 +430,7 @@
                                             <input type="checkbox"
                                                    name="Services"
                                                    value="@item.ID"
-                                                   @if (Model.Services.Any(x => x == item.ID)) { @("checked")     ; } /> @item.Name
+                                                   @if (Model.Services.Any(x => x == item.ID)) { @("checked")       ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -455,7 +465,7 @@
                                             <input type="checkbox"
                                                    name="CrossBorderServices"
                                                    value="@item.ID"
-                                                   @if (Model.CrossBorderServices.Any(x => x == item.ID)) { @("checked")    ; } /> @item.Name
+                                                   @if (Model.CrossBorderServices.Any(x => x == item.ID)) { @("checked")      ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -475,7 +485,7 @@
                                             <input type="checkbox"
                                                    name="GroundServices"
                                                    value="@item.ID"
-                                                   @if (Model.GroundServices.Any(x => x == item.ID)) { @("checked")   ; } /> @item.Name
+                                                   @if (Model.GroundServices.Any(x => x == item.ID)) { @("checked")     ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -496,7 +506,7 @@
                                             <input type="checkbox"
                                                    name="TransportFleets"
                                                    value="@item.ID"
-                                                   @if (Model.TransportFleets.Any(x => x == item.ID)) { @("checked")   ; } /> @item.Name
+                                                   @if (Model.TransportFleets.Any(x => x == item.ID)) { @("checked")     ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -511,7 +521,7 @@
                                 {
                                     <div class="radio">
                                         <label>
-                                            <input name="Company_Service.GeoCoverageID" type="radio" value="4" @if (Model.Company_Service.GeoCoverageID == item.ID) { @("checked")  ; } />
+                                            <input name="Company_Service.GeoCoverageID" type="radio" value="4" @if (Model.Company_Service.GeoCoverageID == item.ID) { @("checked")    ; } />
                                             @Html.Raw(item.Name)
                                         </label>
                                     </div>
@@ -547,7 +557,7 @@
                                             <input type="checkbox"
                                                    name="PayOnDelivery"
                                                    value="@item.ID"
-                                                   @if (Model.PayOnDelivery.Any(x => x == item.ID)) { @("checked")  ; } /> @item.Name
+                                                   @if (Model.PayOnDelivery.Any(x => x == item.ID)) { @("checked")    ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -593,7 +603,7 @@
                                             <input type="checkbox"
                                                    name="InternalBounds"
                                                    value="@item.ID"
-                                                   @if (Model.InternalBounds.Any(x => x == item.ID)) { @("checked") ; } /> @item.Name
+                                                   @if (Model.InternalBounds.Any(x => x == item.ID)) { @("checked")   ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -824,6 +834,8 @@
                 </div>
             </div>
         </div>
+    if (string.IsNullOrWhiteSpace(Model.Status) || Model.Status == "draft")
+    {
         <div class="form-group">
             <div class="col-sm-9 col-sm-offset-3">
                 <button type="submit" class="btn btn-lg btn-primary" id="save" name="btn_save" value="save">
@@ -835,10 +847,31 @@
             </div>
         </div>
     }
+}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="thanksModel" tabindex="-1" role="dialog" aria-labelledby="thanksModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="thanksModalLabel">Thank you</h4>
+            </div>
+            <div class="modal-body">
+                Thank you for your Application, your WCA Manager will be in touch with you shortly.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 @section scripts{
     <script>
-
+        var status = "@Model.Status";
         $(function () {
             $('.collapse').on('shown.bs.collapse', function () {
                 $(this).parent().find(".fa-caret-right").removeClass("fa-caret-right").addClass("fa-caret-down");
@@ -846,17 +879,21 @@
                 $(this).parent().find(".fa-caret-down").removeClass("fa-caret-down").addClass("fa-caret-right");
             });
 
-            $('#YN_OnDelivery').change(function () {
+            if (status == "submitted")
+            {
+                $('#thanksModel').modal();
+            }
+            //$('#YN_OnDelivery').change(function () {
 
-                $(this).is(":checked")
-                    ? $('#pay-on-delivery').hide(300) : $('#pay-on-delivery').show(300);
-            });
+            //    $(this).is(":checked")
+            //        ? $('#pay-on-delivery').hide(300) : $('#pay-on-delivery').show(300);
+            //});
 
-            $('#YN_OnDelivery').each(function () {
+            //$('#YN_OnDelivery').each(function () {
 
-                $(this).is(":checked")
-                    ? $('#pay-on-delivery').hide(300) : $('#pay-on-delivery').show(300);
-            });
+            //    $(this).is(":checked")
+            //        ? $('#pay-on-delivery').hide(300) : $('#pay-on-delivery').show(300);
+            //});
         });
     </script>
 }

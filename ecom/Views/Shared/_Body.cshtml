@@ -3,11 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
+    <title>WCA eCommerce - @ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
+    <header>
+        <div class="container">
+            <a href="https://www.wcaecommerce.com/" title="Return to the Home Page.">
+                <img class="logo" src="/Images/logo.png" alt="WCA eCommerce logo" />
+            </a>
+        </div>
+    </header>
     <div class="container">
         @RenderBody()
     </div>

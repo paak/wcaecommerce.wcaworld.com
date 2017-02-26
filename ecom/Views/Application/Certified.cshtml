@@ -20,7 +20,21 @@
         text-decoration: none;
     }
 </style>
+<div>
+    <h1>Certified Member Application</h1>
 
+    <p>Thank you for your interest in becoming a Certified Member. Please complete the online Form (3 Sections) to commence the process.</p>
+
+    <p>Please note your company will be listed as Certified once the full application and review process is completed and all membership fee’s have been paid.</p>
+
+    <p>Initial Application for Certification should only be made by Head Office and not a Branch office.</p>
+
+    <p>Please complete in full all details requested on the Application form, please contact us (link to web contact form) if you require any assistance.</p>
+
+    <p>The information provided will form the basis for which each company will be reviewed and then followed by an onsite-verification visit by a WCA Representative. Once approved, Certified Members will be listed on the online directory.</p>
+
+    <p>Additional Branch offices can be certified separately as required.</p>
+</div>
 <div class="col-sm-9">
     @using (Html.BeginForm("Certified", "Application", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
     {
@@ -809,16 +823,15 @@
                     </div>
                 </div>
             </div>
-
-            <div class="form-group">
-                <div class="col-sm-9 col-sm-offset-3">
-                    <button type="submit" class="btn btn-lg btn-primary" id="save" name="btn_save" value="save">
-                        Save Draft
-                    </button>
-                    <button type="submit" class="btn btn-lg btn-primary" id="submit" name="btn_save" value="submit">
-                        Submit Application
-                    </button>
-                </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-9 col-sm-offset-3">
+                <button type="submit" class="btn btn-lg btn-primary" id="save" name="btn_save" value="save">
+                    Save Draft
+                </button>
+                <button type="submit" class="btn btn-lg btn-primary" id="submit" name="btn_save" value="submit">
+                    Submit Application
+                </button>
             </div>
         </div>
     }

@@ -184,7 +184,7 @@
                                 {
                                     <div class="radio">
                                         <label>
-                                            @Html.RadioButtonFor(m => m.Company_Detail.AvgPackageWeightID, item.ID)
+                                            <input name="Company_Detail.AvgPackageWeightID" type="radio" value="@item.ID" @if (Model.Company_Detail.AvgPackageWeightID == item.ID) { @("checked")      ; } />
                                             @Html.Raw(item.Name)
                                         </label>
                                     </div>
@@ -203,7 +203,8 @@
                                         <label>
                                             <input type="checkbox"
                                                    name="Products_Handled"
-                                                   value="@item.ID" /> @item.Name
+                                                   value="@item.ID"
+                                                   @if (Model.Products_Handled.Any(x => x == item.ID)) { @("checked")            } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -404,7 +405,8 @@
                                         <label>
                                             <input type="checkbox"
                                                    name="Services"
-                                                   value="@item.ID" /> @item.Name
+                                                   value="@item.ID"
+                                                   @if (Model.Services.Any(x => x == item.ID)) { @("checked")     ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -438,7 +440,8 @@
                                         <label>
                                             <input type="checkbox"
                                                    name="CrossBorderServices"
-                                                   value="@item.ID" /> @item.Name
+                                                   value="@item.ID"
+                                                   @if (Model.CrossBorderServices.Any(x => x == item.ID)) { @("checked")    ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -457,7 +460,8 @@
                                         <label>
                                             <input type="checkbox"
                                                    name="GroundServices"
-                                                   value="@item.ID" /> @item.Name
+                                                   value="@item.ID"
+                                                   @if (Model.GroundServices.Any(x => x == item.ID)) { @("checked")   ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -477,7 +481,8 @@
                                         <label>
                                             <input type="checkbox"
                                                    name="TransportFleets"
-                                                   value="@item.ID" /> @item.Name
+                                                   value="@item.ID"
+                                                   @if (Model.TransportFleets.Any(x => x == item.ID)) { @("checked")   ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -492,7 +497,7 @@
                                 {
                                     <div class="radio">
                                         <label>
-                                            @Html.RadioButtonFor(m => m.Company_Service.GeoCoverageID, item.ID)
+                                            <input name="Company_Service.GeoCoverageID" type="radio" value="4" @if (Model.Company_Service.GeoCoverageID == item.ID) { @("checked")  ; } />
                                             @Html.Raw(item.Name)
                                         </label>
                                     </div>
@@ -527,7 +532,8 @@
                                         <label>
                                             <input type="checkbox"
                                                    name="PayOnDelivery"
-                                                   value="@item.ID" /> @item.Name
+                                                   value="@item.ID"
+                                                   @if (Model.PayOnDelivery.Any(x => x == item.ID)) { @("checked")  ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -572,7 +578,8 @@
                                         <label>
                                             <input type="checkbox"
                                                    name="InternalBounds"
-                                                   value="@item.ID" /> @item.Name
+                                                   value="@item.ID"
+                                                   @if (Model.InternalBounds.Any(x => x == item.ID)) { @("checked") ; } /> @item.Name
                                             </label>
                                         </div>
                                 }
@@ -631,7 +638,7 @@
                                 1. What type of IT system or ERP do you use to manage eCommerce shipment clearance, deliveries &amp; POD?:
                             </label>
                             <div class="col-sm-9">
-                                @Html.TextAreaFor(m => m.Company_IT.MangeShipmentSys, new { @class = "form-control", @rows = 1 })
+                                @Html.TextAreaFor(m => m.Company_IT.MangeShipmentSys, new { @class = "form-control", @rows = 5 })
                             </div>
                         </div>
 
@@ -805,10 +812,10 @@
 
             <div class="form-group">
                 <div class="col-sm-9 col-sm-offset-3">
-                    <button type="submit" class="btn btn-lg btn-primary" id="save">
+                    <button type="submit" class="btn btn-lg btn-primary" id="save" name="btn_save" value="save">
                         Save Draft
                     </button>
-                    <button type="submit" class="btn btn-lg btn-primary" id="submit">
+                    <button type="submit" class="btn btn-lg btn-primary" id="submit" name="btn_save" value="submit">
                         Submit Application
                     </button>
                 </div>

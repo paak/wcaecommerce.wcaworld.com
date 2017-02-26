@@ -1,10 +1,6 @@
 ﻿using ecom.Models;
-using System;
 using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Linq;
-using System.Reflection;
 
 namespace ECM.DAL
 {
@@ -32,10 +28,26 @@ namespace ECM.DAL
         public DbSet<EcomCert_PaymentType> EcomCert_PaymentTypes { get; set; }
         public DbSet<EcomCert_InternalBound> EcomCert_InternalBounds { get; set; }
 
+        // Main tables
+        public DbSet<EcomCert> EcomCerts { get; set; }
+        public DbSet<EcomCert_Status> EcomCert_Status { get; set; }
 
-        //public DbSet<Country> Countries { get; set; }
-        //public DbSet<CityState> States { get; set; }
-        //public DbSet<License> Licenses { get; set; }
+        // Company Details
+        public DbSet<EcomCert_CompDetail> EcomCert_CompDetail { get; set; }
+        public DbSet<EcomCert_Product_Handled> EcomCert_Product_Handled { get; set; }
+
+        //Services
+        public DbSet<EcomCert_Service> EcomCert_Service { get; set; }
+        public DbSet<EcomCert_Service_Provide> EcomCert_Service_Provide { get; set; }
+        public DbSet<EcomCert_Service_CrossBorder> EcomCert_Service_CrossBorder { get; set; }
+        public DbSet<EcomCert_Service_Ground> EcomCert_Service_Ground { get; set; }
+        public DbSet<EcomCert_Service_TransportFleet> EcomCert_Service_TransportFleet { get; set; }
+        public DbSet<EcomCert_Service_PayOnDelivery> EcomCert_Service_PayOnDelivery { get; set; }
+        public DbSet<EcomCert_Service_InternalBound> EcomCert_Service_InternalBound { get; set; }
+        public DbSet<EcomCert_Service_GeoCoverage> EcomCert_Service_GeoCoverage { get; set; }
+
+        // IT System
+        public DbSet<EcomCert_IT> EcomCert_IT { get; set; }
 
         public DbSet<ViewMember> Members { get; set; }
 

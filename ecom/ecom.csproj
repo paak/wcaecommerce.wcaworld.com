@@ -128,6 +128,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="DAL\WCAFhrContext.cs" />
     <Compile Include="DAL\MSDBContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -154,8 +155,11 @@
     <Compile Include="Models\EcomCert_Service_TransportFleet.cs" />
     <Compile Include="Models\EcomCert_Status.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
+    <Compile Include="Models\MSDB\ViewContact.cs" />
     <Compile Include="Models\Network.cs" />
+    <Compile Include="Models\SalesRep.cs" />
     <Compile Include="Models\ViewMember.cs" />
+    <Compile Include="Models\WCAFhr\Employee.cs" />
     <Compile Include="Models\_EcomCert_AvgPackageWeight.cs" />
     <Compile Include="Models\_EcomCert_CrossBorder.cs" />
     <Compile Include="Models\_EcomCert_GeoCoverage.cs" />

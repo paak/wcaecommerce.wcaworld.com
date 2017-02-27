@@ -1,11 +1,15 @@
 ﻿using ECM.DAL;
 using ecom.Models;
+using ecom.Models.MSDB;
+using ecom.Models.WCAFhr;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Web;
 using System.Web.Mvc;
 
 namespace ecom.Controllers
@@ -13,6 +17,7 @@ namespace ecom.Controllers
     public class ApplicationController : Controller
     {
         private MSDBContext _db = new MSDBContext();
+        private WCAFhrContext _hr = new WCAFhrContext();
 
         public ApplicationController()
         {
@@ -332,7 +337,7 @@ namespace ecom.Controllers
 
         // POST: Application/Create
         [HttpPost]
-        public ActionResult Certified(CertifiedMemberApplicationView model, string btn_save)
+        public ActionResult Certified(CertifiedMemberApplicationView model, string btn_save, HttpPostedFileBase file)
         {
             try
             {
@@ -377,14 +382,51 @@ namespace ecom.Controllers
                     // EcomCert_IT
                     InsertOrUpdateCompanyIT(cert.CertID, model.Company_IT);
 
+                    // File uploading
+                    // Verify that the user selected a file
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        // extract only the filename
+                        string fileName = Path.GetFileName(file.FileName);
+
+                        // upload directory
+                        string basePath = "~/uploads";
+
+                        string path = Path.Combine(Server.MapPath(basePath), fileName);
+                        file.SaveAs(path);
+
+                        model.Company_IT.YN_EDIImage_File = fileName;
+                    }
+                    // EcomCert_IT
+                    InsertOrUpdateCompanyIT(cert.CertID, model.Company_IT);
+
                     if (btn_save == "submit")
                     {
+                        // Get member data
+                        ViewMember member = _db.Members
+                            .AsNoTracking()
+                            .FirstOrDefault(x => x.Cid == cert.Cid && x.Nid == 103);
+
+                        int repID = _db.SalesRep
+                            .AsNoTracking()
+                            .Where(x => x.CountryCode == member.Country)
+                            .Select(x => x.EmpID)
+                            .FirstOrDefault();
+
+                        //Sales Rep
+                        Employee emp = _hr.Employees
+                            .AsNoTracking()
+                            .FirstOrDefault(x => x.EmployeeID == repID);
+
+                        string repEmail = emp == null ? "" : emp.Email;
+
                         // Mail to salesrep and Alex
                         string body = "<p>A new certification from: {0}</p>";
                         var message = new MailMessage();
 
                         message.To.Add(new MailAddress("alex@wcaworld.com"));
                         message.To.Add(new MailAddress("mrane@wcaworld.com"));
+                        message.To.Add(new MailAddress(repEmail));
                         message.To.Add(new MailAddress("paak@wcaworld.com"));
 
                         message.From = new MailAddress("ecommerce@wcasys.com");
@@ -404,6 +446,47 @@ namespace ecom.Controllers
                             smtp.Port = 25;
                             smtp.EnableSsl = false;
                             smtp.Send(message);
+                        }
+
+                        // Mail to member
+                        // Member contact
+                        IEnumerable<ViewContact> contacts = _db.ViewContacts
+                            .AsNoTracking()
+                            .Where(x => x.Selected == true)
+                            .Where(x => x.Deleted == false)
+                            .Where(x => x.NId == 103)
+                            .Where(x => x.CId == cert.Cid)
+                            .ToList();
+                        if (contacts.Count() != 0)
+                        {
+                            string bodyToMember = string.Format("The request is submitted and pending for approval. You may contact <a href='mailto:{0}'>{0}</a> for any questions.", repEmail);
+
+                            MailMessage messageToMember = new MailMessage();
+
+                            foreach (ViewContact contact in contacts)
+                            {
+                                messageToMember.To.Add(new MailAddress(contact.Email));
+                            }
+                            messageToMember.To.Add(new MailAddress("paak@wcaworld.com"));
+
+                            messageToMember.From = new MailAddress("ecommerce@wcasys.com");
+                            messageToMember.Subject = "The request is submitted and pending for approval.";
+                            messageToMember.Body = bodyToMember;
+                            messageToMember.IsBodyHtml = true;
+
+                            using (var smtp = new SmtpClient())
+                            {
+                                var credential = new NetworkCredential
+                                {
+                                    UserName = "ecommerce@wcasys.com",
+                                    Password = "E444up134"
+                                };
+                                smtp.Credentials = credential;
+                                smtp.Host = "mail.wcasys.com";
+                                smtp.Port = 25;
+                                smtp.EnableSsl = false;
+                                smtp.Send(messageToMember);
+                            }
                         }
                     }
                 }

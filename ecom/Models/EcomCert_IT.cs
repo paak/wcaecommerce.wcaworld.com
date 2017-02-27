@@ -30,7 +30,7 @@ namespace ecom.Models
 
         public bool? YN_EDIImage { get; set; }
 
-        public bool? YN_EDIImage_File { get; set; }
+        public string YN_EDIImage_File { get; set; }
 
         public bool? YN_PackTrack { get; set; }
 

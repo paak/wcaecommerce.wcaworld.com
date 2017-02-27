@@ -1,0 +1,15 @@
+I have solved the icon issue by:
+
+1. Starting the Task Manager
+2. Ending the explorer.exe process (Right click on explorer.exe -> End process)
+3. Opening a command line window (File -> New Task (Run...) -> Type cmd.exe)
+4. In the cmd window type
+	cd %userprofile%\appdata\local
+5. Now you need to delete the iconcache.db file
+	del iconcache.db /a 
+
+6. Exit the cmd window by typing
+	exit
+
+7. Starting the explorer again (File -> New Task (Run...) -> Type explorer.exe)
+

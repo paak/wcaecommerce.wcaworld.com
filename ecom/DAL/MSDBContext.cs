@@ -1,4 +1,5 @@
 ﻿using ecom.Models;
+using ecom.Models.MSDB;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -49,7 +50,10 @@ namespace ECM.DAL
         // IT System
         public DbSet<EcomCert_IT> EcomCert_IT { get; set; }
 
+        // MSDB
         public DbSet<ViewMember> Members { get; set; }
+        public DbSet<SalesRep> SalesRep { get; set; }
+        public DbSet<ViewContact> ViewContacts { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

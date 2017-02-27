@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web.Mvc;
 
 namespace ecom.Controllers
@@ -53,10 +55,57 @@ namespace ecom.Controllers
 
         }
 
-        [Authorize]
-        public ActionResult Certified()
+        [AllowAnonymous]
+        public ActionResult Report()
         {
-            int Cid = Convert.ToInt32(HttpContext.Session["Cid"]);
+            if (Session["temp_report"] == null)
+            {
+                return RedirectToAction("Login", "Application");
+            }
+
+            IQueryable<EcomCert_Status> ecomCertStatusQuery = _db.EcomCert_Status.AsNoTracking()
+                .Where(x => x.StatusID == 2)
+                .OrderBy(x => x.CertID);
+
+            IEnumerable<int> certIDs = ecomCertStatusQuery.Select(x => x.CertID).ToList();
+
+            IEnumerable<EcomCert_CompDetail> certs = _db.EcomCert_CompDetail.AsNoTracking()
+                .Where(x => certIDs.Contains(x.CertID))
+                .ToList();
+
+            return View(certs);
+        }
+
+        [AllowAnonymous]
+        public ActionResult Login()
+        {
+            if (Request.Form["login_name"] == "wcaecom_rpcm")
+            {
+                Session["temp_report"] = "temp_report";
+
+                return RedirectToAction("Report", "Application");
+            }
+
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult ReportCertified(int id)
+        {
+            /*if (Request.UrlReferrer == null || (Request.UrlReferrer != null && Request.UrlReferrer.AbsoluteUri != "http://wcaecommerce.wcaworld.com/eng/report_cert.asp"))
+            {
+                return RedirectToAction("Login", "Account");
+            }*/
+
+            if (Session["temp_report"] == null)
+            {
+                return RedirectToAction("Login", "Application");
+            }
+
+            //int Cid = Convert.ToInt32(HttpContext.Session["Cid"]);
+            int CertId = id;
+
+            int Cid = _db.EcomCerts.Where(r => r.CertID == CertId).FirstOrDefault().Cid;
 
             if (Cid == 0)
             {
@@ -167,6 +216,120 @@ namespace ecom.Controllers
             return View(model);
         }
 
+        [Authorize]
+        public ActionResult Certified()
+        {
+            int Cid = Convert.ToInt32(HttpContext.Session["Cid"]);
+
+            if (Cid == 0)
+            {
+                //redirec to login
+            }
+
+            ViewMember member = _db.Members.AsNoTracking()
+                .Include(x => x.Memberships)
+                .Include(x => x.Memberships.Select(y => y.Network))
+                .FirstOrDefault(x => x.Cid == Cid && x.Nid == 103);
+
+            if (member == null)
+            {
+                //redirec to logi
+            }
+
+            CertifiedMemberApplicationView model = new CertifiedMemberApplicationView();
+
+            model.Company = member;
+            model.Company.Memberships = member.Memberships;
+
+            model.EcomCert.Cid = Cid;
+            model.Company_Detail.CompName = member.Company;
+
+            EcomCert cert = _db.EcomCerts.AsNoTracking()
+                .FirstOrDefault(x => x.Cid == Cid);
+
+            if (cert != null)
+            {
+                int StatusId = _db.EcomCert_Status.AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.StatusID)
+                    .FirstOrDefault();
+
+                // Status
+                model.Status = StatusId == 1 ? "draft" : "submitted";
+
+
+                // Company detail
+                EcomCert_CompDetail companyDetail = _db.EcomCert_CompDetail
+                    .Find(cert.CertID);
+
+                model.Company_Detail = companyDetail == null ? new EcomCert_CompDetail() : companyDetail;
+
+                IEnumerable<int> productsHandled = _db.EcomCert_Product_Handled
+                    .AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.ProductId)
+                    .ToList();
+                model.Products_Handled = productsHandled;
+
+                // Company service
+                EcomCert_Service companyService = _db.EcomCert_Service
+                    .Find(cert.CertID);
+
+                // Company service: services provide
+                IEnumerable<int> companyServicesProvide = _db.EcomCert_Service_Provide
+                    .AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.ServiceId)
+                    .ToList();
+
+                model.Company_Service = companyService == null ? new EcomCert_Service() : companyService;
+                model.Services = companyServicesProvide;
+
+                // Company service cross-border service provide
+                model.CrossBorderServices = _db.EcomCert_Service_CrossBorder
+                    .AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.CrossBorderId)
+                    .ToList();
+
+                // Company service: GroundServices
+                model.GroundServices = _db.EcomCert_Service_Ground
+                    .AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.GroundServiceId)
+                    .ToList();
+
+                // Company service: TransportFleets
+                model.TransportFleets = _db.EcomCert_Service_TransportFleet
+                    .AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.TransportFleetId)
+                    .ToList();
+
+                // Company service: PayOnDelivery
+                model.PayOnDelivery = _db.EcomCert_Service_PayOnDelivery
+                    .AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.PaymentTypeId)
+                    .ToList();
+
+                // Company service: InternalBounds
+                model.InternalBounds = _db.EcomCert_Service_InternalBound
+                    .AsNoTracking()
+                    .Where(x => x.CertID == cert.CertID)
+                    .Select(x => x.InternalBoundId)
+                    .ToList();
+
+                // Company IT
+                EcomCert_IT companyIT = _db.EcomCert_IT
+                    .Find(cert.CertID);
+
+                model.Company_IT = companyIT == null ? new EcomCert_IT() : companyIT;
+            }
+
+            return View(model);
+        }
+
         // POST: Application/Create
         [HttpPost]
         public ActionResult Certified(CertifiedMemberApplicationView model, string btn_save)
@@ -217,6 +380,31 @@ namespace ecom.Controllers
                     if (btn_save == "submit")
                     {
                         // Mail to salesrep and Alex
+                        string body = "<p>A new certification from: {0}</p>";
+                        var message = new MailMessage();
+
+                        message.To.Add(new MailAddress("alex@wcaworld.com"));
+                        message.To.Add(new MailAddress("mrane@wcaworld.com"));
+                        message.To.Add(new MailAddress("paak@wcaworld.com"));
+
+                        message.From = new MailAddress("ecommerce@wcasys.com");
+                        message.Subject = "A new certification waiting for verification.";
+                        message.Body = string.Format(body, model.Company_Detail.CompName);
+                        message.IsBodyHtml = true;
+
+                        using (var smtp = new SmtpClient())
+                        {
+                            var credential = new NetworkCredential
+                            {
+                                UserName = "ecommerce@wcasys.com",
+                                Password = "E444up134"
+                            };
+                            smtp.Credentials = credential;
+                            smtp.Host = "mail.wcasys.com";
+                            smtp.Port = 25;
+                            smtp.EnableSsl = false;
+                            smtp.Send(message);
+                        }
                     }
                 }
 
@@ -238,6 +426,7 @@ namespace ecom.Controllers
             // If no recorad create new
             if (cert == null)
             {
+                cert = new EcomCert();
                 cert.Cid = cId;
                 cert.CreateDate = DateTime.Now;
 

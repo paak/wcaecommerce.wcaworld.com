@@ -230,6 +230,9 @@
     <Content Include="Views\Application\Certified.cshtml" />
     <Content Include="Views\Shared\_Body.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Application\Login.cshtml" />
+    <Content Include="Views\Application\Report.cshtml" />
+    <Content Include="Views\Application\ReportCertified.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

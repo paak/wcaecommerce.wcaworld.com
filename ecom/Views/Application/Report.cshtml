@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ecom.Models.EcomCert_CompDetail>
+@{
+    ViewBag.Title = "Report";
+}
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>WCA-eCommerce</title>
+    <link rel="stylesheet" href="http://lib.wcaworld.com/bootstrap/bootstrap-3.3.7/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="/eng/css/layout.css" type="text/css" />
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+
+            <div style="margin:10px 0px;font-weight:bold;">Certified Member Application ( Temporary Report )</div>
+            @if (Model.Count() > 0)
+            {
+                <ul>
+                    @foreach (ecom.Models.EcomCert_CompDetail item in Model)
+                    {
+                        <li>
+                            <a href="/application/ReportCertified/@item.CertID" target="_blank">
+                                @item.CompName
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div>No record found.</div>
+            }
+        </div>
+    </div>
+</body>
+</html>

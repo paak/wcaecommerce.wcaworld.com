@@ -485,7 +485,8 @@ namespace ecom.Controllers
                                 smtp.Host = "mail.wcasys.com";
                                 smtp.Port = 25;
                                 smtp.EnableSsl = false;
-                                smtp.Send(messageToMember);
+                                
+                                //smtp.Send(messageToMember);
                             }
                         }
                     }

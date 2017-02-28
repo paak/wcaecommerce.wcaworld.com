@@ -66,6 +66,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -122,6 +123,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSetting.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -135,8 +137,7 @@
     </Compile>
     <Compile Include="LoginInfo.cs" />
     <Compile Include="Models\CertifiedMemberApplicationView.cs" />
-    <Compile Include="Models\CompanyDetail.cs" />
-    <Compile Include="Models\Company_Membership.cs" />
+    <Compile Include="Models\MSDB\Company_Membership.cs" />
     <Compile Include="Models\EcomCert.cs" />
     <Compile Include="Models\EcomCert_CompDetail.cs" />
     <Compile Include="Models\EcomCert_History.cs" />
@@ -156,9 +157,9 @@
     <Compile Include="Models\EcomCert_Status.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\MSDB\ViewContact.cs" />
-    <Compile Include="Models\Network.cs" />
-    <Compile Include="Models\SalesRep.cs" />
-    <Compile Include="Models\ViewMember.cs" />
+    <Compile Include="Models\MSDB\Network.cs" />
+    <Compile Include="Models\MSDB\SalesRep.cs" />
+    <Compile Include="Models\MSDB\ViewMember.cs" />
     <Compile Include="Models\WCAFhr\Employee.cs" />
     <Compile Include="Models\_EcomCert_AvgPackageWeight.cs" />
     <Compile Include="Models\_EcomCert_CrossBorder.cs" />
@@ -197,6 +198,8 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="App_Data\smtp.config" />
+    <Content Include="App_Data\connectionStrings.config" />
     <None Include="Properties\PublishProfiles\live.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Images\logo.png" />

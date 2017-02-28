@@ -221,15 +221,10 @@ namespace ecom.Controllers
             return View(model);
         }
 
-        [Authorize]
-        public ActionResult Certified()
+        //[Authorize]
+        public ActionResult Certified(int cId = 0)
         {
-            int Cid = Convert.ToInt32(HttpContext.Session["Cid"]);
-
-            if (Cid == 0)
-            {
-                //redirec to login
-            }
+            int Cid = cId == 0 ? Convert.ToInt32(HttpContext.Session["Cid"]) : cId;
 
             ViewMember member = _db.Members.AsNoTracking()
                 .Include(x => x.Memberships)
@@ -238,7 +233,8 @@ namespace ecom.Controllers
 
             if (member == null)
             {
-                //redirec to logi
+                //redirec to login
+                return RedirectToAction("Login", "Account", new { returnUrl = "application/certified" });
             }
 
             CertifiedMemberApplicationView model = new CertifiedMemberApplicationView();
@@ -341,7 +337,7 @@ namespace ecom.Controllers
         {
             try
             {
-                if (model != null)
+                if (model != null && model.EcomCert != null)
                 {
                     // Application
                     EcomCert cert = CreateEcomCertIfNotExists(model.EcomCert.Cid);
@@ -396,9 +392,10 @@ namespace ecom.Controllers
                         file.SaveAs(path);
 
                         model.Company_IT.YN_EDIImage_File = fileName;
+
+                        // EcomCert_IT
+                        InsertOrUpdateCompanyIT(cert.CertID, model.Company_IT);
                     }
-                    // EcomCert_IT
-                    InsertOrUpdateCompanyIT(cert.CertID, model.Company_IT);
 
                     if (btn_save == "submit")
                     {
@@ -409,6 +406,7 @@ namespace ecom.Controllers
 
                         int repID = _db.SalesRep
                             .AsNoTracking()
+                            .Where(x => x.IsActive && x.Nid == 103 && x.TypeCode == "Rep")
                             .Where(x => x.CountryCode == member.Country)
                             .Select(x => x.EmpID)
                             .FirstOrDefault();
@@ -422,34 +420,27 @@ namespace ecom.Controllers
 
                         // Mail to salesrep and Alex
                         string body = "<p>A new certification from: {0}</p>";
+                        body += "<p>The WCA eCommerce Certified Member Application report can be found here:</p>";
+                        body += "<p><a href=\"http://wcaecommerce.wcaworld.com/application/report\">http://wcaecommerce.wcaworld.com/application/report</a>";
+                        body += "<p>password: wcaecom_rpcm</p>";
+
                         var message = new MailMessage();
 
                         message.To.Add(new MailAddress("alex@wcaworld.com"));
                         message.To.Add(new MailAddress("mrane@wcaworld.com"));
                         message.To.Add(new MailAddress(repEmail));
-                        message.To.Add(new MailAddress("paak@wcaworld.com"));
+                        message.Bcc.Add(new MailAddress("paak@wcaworld.com"));
 
-                        message.From = new MailAddress("ecommerce@wcasys.com");
                         message.Subject = "A new certification waiting for verification.";
                         message.Body = string.Format(body, model.Company_Detail.CompName);
                         message.IsBodyHtml = true;
 
                         using (var smtp = new SmtpClient())
                         {
-                            var credential = new NetworkCredential
-                            {
-                                UserName = "ecommerce@wcasys.com",
-                                Password = "E444up134"
-                            };
-                            smtp.Credentials = credential;
-                            smtp.Host = "mail.wcasys.com";
-                            smtp.Port = 25;
-                            smtp.EnableSsl = false;
                             smtp.Send(message);
                         }
 
                         // Mail to member
-                        // Member contact
                         IEnumerable<ViewContact> contacts = _db.ViewContacts
                             .AsNoTracking()
                             .Where(x => x.Selected == true)
@@ -465,28 +456,21 @@ namespace ecom.Controllers
 
                             foreach (ViewContact contact in contacts)
                             {
-                                messageToMember.To.Add(new MailAddress(contact.Email));
+                                messageToMember.To.Add(new MailAddress(contact.Email + ".th"));
                             }
-                            messageToMember.To.Add(new MailAddress("paak@wcaworld.com"));
+                            messageToMember.Bcc.Add(new MailAddress("paak@wcaworld.com"));
 
-                            messageToMember.From = new MailAddress("ecommerce@wcasys.com");
                             messageToMember.Subject = "The request is submitted and pending for approval.";
                             messageToMember.Body = bodyToMember;
                             messageToMember.IsBodyHtml = true;
 
                             using (var smtp = new SmtpClient())
                             {
-                                var credential = new NetworkCredential
+                                // If live email will send to member
+                                if (AppSetting.GetIsLive)
                                 {
-                                    UserName = "ecommerce@wcasys.com",
-                                    Password = "E444up134"
-                                };
-                                smtp.Credentials = credential;
-                                smtp.Host = "mail.wcasys.com";
-                                smtp.Port = 25;
-                                smtp.EnableSsl = false;
-                                
-                                //smtp.Send(messageToMember);
+                                    smtp.Send(messageToMember);
+                                }
                             }
                         }
                     }
@@ -496,7 +480,7 @@ namespace ecom.Controllers
             }
             catch (Exception ex)
             {
-                return View();
+                return RedirectToAction("Certified");
             }
         }
 

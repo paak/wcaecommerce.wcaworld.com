@@ -8,6 +8,11 @@ namespace ecom.Models
     {
         [Key]
         public int EmpID { get; set; }
+
+        public int Nid { get; set; }
+        public string TypeCode { get; set; }
         public string CountryCode { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }
